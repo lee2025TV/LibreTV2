@@ -1,5 +1,5 @@
 // 全局变量
-let selectedAPIs = JSON.parse(localStorage.getItem('selectedAPIs') || '["ruyi","cjhw","ffzy","dbzy","lzzy","bfzy","qiqikp","heimuer","mozhua","mdzy","wolong","tyyszy","ikunzy","zy360","wujin","zuida","jisu"]'); // 默认选中黑木耳
+let selectedAPIs = JSON.parse(localStorage.getItem('selectedAPIs') || '["ruyi","cjhw","ffzy","dbzy","lzzy","bfzy","qiqikp","mozhua","mdzy","wolong","tyyszy","ikunzy","zy360","wujin","zuida","jisu"]'); // 默认选中黑木耳
 let customAPIs = JSON.parse(localStorage.getItem('customAPIs') || '[]'); // 存储自定义API列表
 
 // 添加当前播放的集数索引
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 设置默认API选择（如果是第一次加载）
     if (!localStorage.getItem('hasInitializedDefaults')) {
         // 仅选择黑木耳源
-        selectedAPIs = ["ruyi","cjhw","ffzy","dbzy","lzzy","bfzy","qiqikp","heimuer","mozhua","mdzy","wolong","tyyszy","ikunzy","zy360","wujin","zuida","jisu"];
+        selectedAPIs = ["ruyi","cjhw","ffzy","dbzy","lzzy","bfzy","qiqikp","mozhua","mdzy","wolong","tyyszy","ikunzy","zy360","wujin","zuida","jisu"];
         localStorage.setItem('selectedAPIs', JSON.stringify(selectedAPIs));
         
         // 默认选中过滤开关
@@ -109,7 +109,7 @@ function initAPICheckboxes() {
         // 创建成人API源的复选框
         Object.keys(API_SITES).forEach(apiKey => {
             const api = API_SITES[apiKey];
-            //if (!api.adult) return; // 仅添加成人内容API
+            if (!api.adult) return; // 仅添加成人内容API
             
             const checked = selectedAPIs.includes(apiKey);
             
@@ -566,13 +566,6 @@ function getCustomApiInfo(customApiIndex) {
 
 // 搜索功能 - 修改为支持多选API
 async function search() {
-    // 密码保护校验
-    if (window.isPasswordProtected && window.isPasswordVerified) {
-        if (window.isPasswordProtected() && !window.isPasswordVerified()) {
-            showPasswordModal && showPasswordModal();
-            return;
-        }
-    }
     const query = document.getElementById('searchInput').value.trim();
     
     if (!query) {
@@ -775,13 +768,6 @@ async function search() {
 
 // 显示详情 - 修改为支持自定义API
 async function showDetails(id, vod_name, sourceCode) {
-    // 密码保护校验
-    if (window.isPasswordProtected && window.isPasswordVerified) {
-        if (window.isPasswordProtected() && !window.isPasswordVerified()) {
-            showPasswordModal && showPasswordModal();
-            return;
-        }
-    }
     if (!id) {
         showToast('视频ID无效', 'error');
         return;
@@ -869,13 +855,6 @@ async function showDetails(id, vod_name, sourceCode) {
 
 // 更新播放视频函数，修改为在新标签页中打开播放页面，并保存到历史记录
 function playVideo(url, vod_name, episodeIndex = 0) {
-    // 密码保护校验
-    if (window.isPasswordProtected && window.isPasswordVerified) {
-        if (window.isPasswordProtected() && !window.isPasswordVerified()) {
-            showPasswordModal && showPasswordModal();
-            return;
-        }
-    }
     if (!url) {
         showToast('无效的视频链接', 'error');
         return;
@@ -897,7 +876,6 @@ function playVideo(url, vod_name, episodeIndex = 0) {
     }
     
     // 保存当前状态到localStorage，让播放页面可以获取
-    const currentVideoTitle = vod_name;
     localStorage.setItem('currentVideoTitle', currentVideoTitle);
     localStorage.setItem('currentEpisodeIndex', episodeIndex);
     localStorage.setItem('currentEpisodes', JSON.stringify(currentEpisodes));
@@ -910,9 +888,7 @@ function playVideo(url, vod_name, episodeIndex = 0) {
         url: url,
         episodeIndex: episodeIndex,
         sourceName: sourceName,
-        timestamp: Date.now(),
-        // 重要：将完整的剧集信息也添加到历史记录中
-        episodes: currentEpisodes && currentEpisodes.length > 0 ? [...currentEpisodes] : []
+        timestamp: Date.now()
     };
     
     // 保存到观看历史，添加sourceName
