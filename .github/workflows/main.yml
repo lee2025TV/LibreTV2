@@ -1,0 +1,11 @@
+name: Pull on Push
+on:
+  push:
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Pull latest changes
+      run: git pull
